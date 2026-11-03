@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-page-title title="Дашборд" :subtitle="'С возвращением, '.auth()->user()->name.'!'">
         <x-slot name="actions">
-            <x-btn href="#">Перейти в каталог</x-btn>
+            <x-btn href="{{ route('catalog')}}">Перейти в каталог</x-btn>
         </x-slot>
     </x-page-title>
 

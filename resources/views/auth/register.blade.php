@@ -1,67 +1,66 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+    <x-card class="!p-8">
+        <h2 class="text-center text-xl font-bold text-gray-900">Создать аккаунт</h2>
+        <p class="mt-1 text-center text-sm text-gray-500">Выберите роль — её можно сменить позже</p>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required
-                autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+        <form method="POST" action="{{ route('register') }}" class="mt-6 space-y-5"
+              x-data="{ role: '{{ old('role', 'student') }}' }">
+            @csrf
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
-                autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password"
-                name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-        <div class="mt-4">
-            <x-input-label for="role" :value="__('Роль')" />
-            <div class="mt-1 flex gap-4">
-                <label class="flex items-center">
-                    <input type="radio" name="role" value="student" checked
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-gray-600">Студент</span>
+            {{-- Плитки ролей --}}
+            <div class="grid grid-cols-2 gap-3">
+                <label class="cursor-pointer rounded-xl border-2 p-4 text-center transition"
+                       :class="role === 'student' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'">
+                    <input type="radio" name="role" value="student" x-model="role" class="sr-only" checked>
+                    <span class="text-2xl">🎓</span>
+                    <span class="mt-1 block text-sm font-semibold text-gray-800">Студент</span>
+                    <span class="mt-0.5 block text-xs text-gray-500">Учиться и проходить тесты</span>
                 </label>
-                <label class="flex items-center">
-                    <input type="radio" name="role" value="author"
-                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-gray-600">Автор / Преподаватель</span>
+
+                <label class="cursor-pointer rounded-xl border-2 p-4 text-center transition"
+                       :class="role === 'author' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'">
+                    <input type="radio" name="role" value="author" x-model="role" class="sr-only">
+                    <span class="text-2xl">✍️</span>
+                    <span class="mt-1 block text-sm font-semibold text-gray-800">Автор</span>
+                    <span class="mt-0.5 block text-xs text-gray-500">Создавать курсы и зарабатывать</span>
                 </label>
             </div>
-            <x-input-error :messages="$errors->get('role')" class="mt-2" />
-        </div>
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <div>
+                <x-input-label for="name" value="Имя / логин" />
+                <x-text-input id="name" name="name" class="mt-1 block w-full"
+                              :value="old('name')" required autofocus autocomplete="name" />
+                <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            </div>
+
+            <div>
+                <x-input-label for="email" value="Email" />
+                <x-text-input id="email" name="email" type="email" class="mt-1 block w-full"
+                              :value="old('email')" required autocomplete="email" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                    <x-input-label for="password" value="Пароль" />
+                    <x-text-input id="password" name="password" type="password"
+                                  class="mt-1 block w-full" required autocomplete="new-password" />
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                </div>
+                <div>
+                    <x-input-label for="password_confirmation" value="Повторите пароль" />
+                    <x-text-input id="password_confirmation" name="password_confirmation" type="password"
+                                  class="mt-1 block w-full" required autocomplete="new-password" />
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                </div>
+            </div>
+
+            <x-btn type="submit" size="lg" class="w-full">Зарегистрироваться</x-btn>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-gray-500">
+            Уже есть аккаунт?
+            <a href="{{ route('login') }}" class="font-semibold text-primary-600 hover:text-primary-700">Войти</a>
+        </p>
+    </x-card>
 </x-guest-layout>

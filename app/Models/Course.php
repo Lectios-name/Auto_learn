@@ -122,4 +122,29 @@ class Course extends Model
     {
         $this->update(['duration_minutes' => (int) $this->lessons()->sum('duration_minutes')]);
     }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    /**
+     * Пересчитывает средний рейтинг и число отзывов.
+     */
+    public function recalculateRating(): void
+    {
+        $stats = $this->reviews()
+            ->selectRaw('AVG(rating) as avg_rating, COUNT(*) as cnt')
+            ->first();
+
+        $this->update([
+            'rating_avg' => round((float) $stats->avg_rating, 2),
+            'rating_count' => (int) $stats->cnt,
+        ]);
+    }
 }

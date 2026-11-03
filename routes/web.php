@@ -6,6 +6,8 @@ use App\Http\Controllers\Author\CourseController as AuthorCourseController;
 use App\Http\Controllers\Author\CourseBuilderController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CoursePageController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -24,6 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('courses.enroll');
+    Route::post('/courses/{course}/reviews', [ReviewController::class, 'store'])->name('courses.reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });
 
 Route::middleware(['auth', 'role:author'])
@@ -56,5 +62,12 @@ Route::middleware(['auth', 'role:author'])
         Route::post('/lessons/{lesson}/materials', [CourseBuilderController::class, 'storeMaterial'])->name('builder.materials.store');
         Route::delete('/materials/{material}', [CourseBuilderController::class, 'destroyMaterial'])->name('builder.materials.destroy');
     });
+
+Route::get('/67', function () {
+    $count = (int) session('easter67', 0) + 1;
+    session(['easter67' => $count]);
+
+    return view('easter.67', ['count' => $count]);
+})->name('easter67');
 
 require __DIR__ . '/auth.php';

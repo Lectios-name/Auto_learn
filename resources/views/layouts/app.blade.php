@@ -195,8 +195,13 @@
                             <button @click="open = !open"
                                 class="flex items-center gap-2 rounded-full p-1 hover:bg-gray-100">
                                 <span
-                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-500 text-sm font-bold text-white">
-                                    {{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
+                                    class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary-500 text-sm font-bold text-white">
+                                    @if (auth()->user()->avatar_path)
+                                        <img src="{{ asset('storage/' . auth()->user()->avatar_path) }}" alt=""
+                                            class="h-8 w-8 object-cover">
+                                    @else
+                                        {{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
+                                    @endif
                                 </span>
                                 <span
                                     class="hidden text-sm font-medium text-gray-700 sm:block">{{ auth()->user()->name }}</span>
@@ -229,33 +234,55 @@
                             {{ session('success') }}
                         </div>
                     @endif
+                    
+                    @if (session('error'))
+                        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if (session('info'))
+                        <div class="mb-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                            {{ session('info') }}
+                        </div>
+                    @endif
                     {{ $slot }}
                 </main>
             </div>
         </div>
     @else
-        {{-- Публичная часть для гостей --}}
-        <header class="sticky top-0 z-40 border-b border-gray-200 bg-white">
-            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <a href="{{ url('/') }}" class="flex items-center gap-2.5">
-                    <img src="{{ asset('images/logo.png') }}" alt="" class="h-9 w-9 object-contain">
-                    <span class="text-lg font-extrabold tracking-tight text-gray-900">Autolearn</span>
-                </a>
-                <nav class="flex items-center gap-3">
-                    <a href="{{ route('catalog') }}" class="hidden text-sm font-medium text-gray-600 hover:text-primary-600 sm:block">Каталог
-                        курсов</a>
-                    <a href="{{ route('login') }}"
-                        class="text-sm font-medium text-gray-600 hover:text-primary-600">Войти</a>
-                    <x-btn href="{{ route('register') }}" size="sm">Регистрация</x-btn>
-                </nav>
-            </div>
-        </header>
-        <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{{ $slot }}</main>
-        <footer class="border-t border-gray-200 bg-white py-8">
-            <div class="mx-auto max-w-7xl px-4 text-center text-sm text-gray-400 sm:px-6 lg:px-8">
-                © {{ date('Y') }} Autolearn — платформа онлайн-обучения с автоматизированным контролем знаний
-            </div>
-        </footer>
+        <div class="flex min-h-screen flex-col">
+            <header class="sticky top-0 z-40 border-b border-gray-200 bg-white">
+                <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                    <a href="{{ url('/') }}" class="flex items-center gap-2.5">
+                        <img src="{{ asset('images/logo.png') }}" alt="" class="h-11 w-11 object-contain">
+                        <span class="text-lg font-extrabold tracking-tight text-gray-900">Autolearn</span>
+                    </a>
+                    <nav class="flex items-center gap-3">
+                        <a href="{{ route('catalog') }}"
+                            class="hidden text-sm font-medium text-gray-600 hover:text-primary-600 sm:block">Каталог
+                            курсов</a>
+                        @auth
+                            <x-btn href="{{ route('dashboard') }}" size="sm">Мой кабинет</x-btn>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="text-sm font-medium text-gray-600 hover:text-primary-600">Войти</a>
+                            <x-btn href="{{ route('register') }}" size="sm">Регистрация</x-btn>
+                        @endauth
+                    </nav>
+                </div>
+            </header>
+
+            <main class="flex-1">
+                <div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">{{ $slot }}</div>
+            </main>
+
+            <footer class="border-t border-gray-200 bg-white py-8">
+                <div class="mx-auto max-w-7xl px-4 text-center text-sm text-gray-400 sm:px-6 lg:px-8">
+                    © {{ date('Y') }} Autolearn — платформа онлайн-обучения с автоматизированным контролем знаний
+                </div>
+            </footer>
+        </div>
     @endauth
 
 </body>

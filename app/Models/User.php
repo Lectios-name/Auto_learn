@@ -23,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar_path',
+
     ];
 
     /**
@@ -48,7 +50,7 @@ class User extends Authenticatable
         ];
     }
 
-   
+
     /**
      * Курсы, где пользователь является автором (преподавателем).
      */
@@ -57,7 +59,7 @@ class User extends Authenticatable
         return $this->hasMany(Course::class, 'author_id');
     }
 
-    
+
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
@@ -71,5 +73,15 @@ class User extends Authenticatable
     public function isStudent(): bool
     {
         return $this->hasRole('student');
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }
