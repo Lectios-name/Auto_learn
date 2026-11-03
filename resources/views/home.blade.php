@@ -16,7 +16,7 @@
 
         <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
             <x-btn href="{{ route('register') }}" size="lg">Начать обучение</x-btn>
-            <x-btn href="#" variant="secondary" size="lg">Смотреть каталог</x-btn>
+            <x-btn href="{{ route('catalog') }}" variant="secondary" size="lg">Смотреть каталог</x-btn>
         </div>
     </section>
 

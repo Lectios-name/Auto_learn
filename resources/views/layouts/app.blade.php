@@ -60,7 +60,7 @@
                                     </svg></x-slot>
                                 Мои курсы
                             </x-sidebar-link>
-                            <x-sidebar-link href="#">
+                            <x-sidebar-link href="{{ route('catalog') }}">
                                 <x-slot name="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -85,7 +85,7 @@
                     <div>
                         <p class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Преподавание</p>
                         <div class="mt-2 space-y-1">
-                            <x-sidebar-link href="#">
+                            <x-sidebar-link href="{{ route('author.courses.index') }}">
                                 <x-slot name="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -224,6 +224,11 @@
                 </header>
 
                 <main class="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+                    @if (session('success'))
+                        <div class="mb-6 rounded-lg border border-primary-200 bg-primary-50 px-4 py-3 text-sm text-primary-800">
+                            {{ session('success') }}
+                        </div>
+                    @endif
                     {{ $slot }}
                 </main>
             </div>
@@ -237,7 +242,7 @@
                     <span class="text-lg font-extrabold tracking-tight text-gray-900">Autolearn</span>
                 </a>
                 <nav class="flex items-center gap-3">
-                    <a href="#" class="hidden text-sm font-medium text-gray-600 hover:text-primary-600 sm:block">Каталог
+                    <a href="{{ route('catalog') }}" class="hidden text-sm font-medium text-gray-600 hover:text-primary-600 sm:block">Каталог
                         курсов</a>
                     <a href="{{ route('login') }}"
                         class="text-sm font-medium text-gray-600 hover:text-primary-600">Войти</a>
