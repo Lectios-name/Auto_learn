@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Enrollment extends Model
 {
     protected $fillable = [
-        'user_id', 'course_id', 'progress_percent', 'last_lesson_id', 'completed_at',
+        'user_id',
+        'course_id',
+        'progress_percent',
+        'last_lesson_id',
+        'completed_at',
     ];
 
     protected function casts(): array
@@ -54,5 +58,17 @@ class Enrollment extends Model
             'progress_percent' => $percent,
             'completed_at' => $percent === 100 ? ($this->completed_at ?? now()) : null,
         ]);
+    }
+
+    public function nextLesson(): ?Lesson
+    {
+        $completedLessonIds = LessonCompletion::where('user_id', $this->user_id)
+            ->where('course_id', $this->course_id)
+            ->pluck('lesson_id');
+
+        return $this->course
+            ->lessons()
+            ->whereNotIn('lessons.id', $completedLessonIds)
+            ->first();
     }
 }

@@ -100,7 +100,7 @@
 
                             {{-- Редактор урока --}}
                             <div x-show="open" x-cloak class="mt-4 space-y-4 rounded-xl bg-gray-50 p-4">
-                                <form method="POST" action="{{ route('author.builder.lessons.update', $lesson) }}" class="space-y-4">
+                                <form method="POST" action="{{ route('author.builder.lessons.update', $lesson) }}" enctype="multipart/form-data" class="space-y-4">
                                     @csrf
                                     @method('PUT')
 
@@ -122,11 +122,24 @@
                                         </div>
                                     </div>
 
-                                    <div x-show="lessonType === 'video'">
-                                        <x-input-label :for="'lesson-video-'.$lesson->id" value="Ссылка на видео (YouTube / Vimeo)" />
-                                        <x-text-input :id="'lesson-video-'.$lesson->id" name="video_url"
-                                                      :value="$lesson->video_url" class="mt-1 block w-full"
-                                                      placeholder="https://youtube.com/watch?v=..." />
+                                    {{-- Видео: ссылка ИЛИ файл --}}
+                                    <div x-show="lessonType === 'video'" class="space-y-3">
+                                        <div>
+                                            <x-input-label :for="'lesson-video-'.$lesson->id" value="Ссылка на видео (YouTube / Vimeo / прямой .mp4)" />
+                                            <x-text-input :id="'lesson-video-'.$lesson->id" name="video_url" :value="$lesson->video_url"
+                                                          class="mt-1 block w-full" placeholder="https://youtube.com/watch?v=..." />
+                                            <p class="mt-1 text-xs text-gray-400">Ссылки YouTube и Vimeo автоматически превращаются во встроенный плеер.</p>
+                                        </div>
+
+                                        <div>
+                                            <x-input-label :for="'lesson-video-file-'.$lesson->id" value="Или загрузить видеофайл (mp4, webm, mov)" />
+                                            @if ($lesson->video_path)
+                                                <p class="mt-1 text-xs font-medium text-primary-600">Загружен файл: {{ basename($lesson->video_path) }} (он имеет приоритет над ссылкой)</p>
+                                            @endif
+                                            <input type="file" name="video_file" :id="'lesson-video-file-'.$lesson->id"
+                                                   accept="video/mp4,video/webm,video/quicktime"
+                                                   class="mt-1 block w-full text-sm text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-primary-50 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-primary-700 hover:file:bg-primary-100" />
+                                        </div>
                                     </div>
 
                                     <div x-show="lessonType === 'text'">

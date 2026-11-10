@@ -32,7 +32,7 @@
         <x-card>
             <x-slot name="header">Быстрые действия</x-slot>
             <div class="space-y-3">
-                <x-btn href="#" class="w-full">Продолжить обучение</x-btn>
+                <x-btn href="{{ route('student.my-courses') }}" class="w-full">Продолжить обучение</x-btn>
                 <x-btn href="#" variant="secondary" class="w-full">Мои покупки</x-btn>
             </div>
         </x-card>

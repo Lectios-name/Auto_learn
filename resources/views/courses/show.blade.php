@@ -24,7 +24,8 @@
                         ({{ $course->rating_count }} отзывов)
                     </span>
                     <span>⏱ {{ round($course->duration_minutes / 60, 1) }} ч</span>
-                    <span>🎯 {{ ['beginner' => 'Начинающий', 'intermediate' => 'Средний', 'advanced' => 'Продвинутый'][$course->level] }}</span>
+                    <span>🎯
+                        {{ ['beginner' => 'Начинающий', 'intermediate' => 'Средний', 'advanced' => 'Продвинутый'][$course->level] }}</span>
                 </div>
             </x-card>
 
@@ -38,13 +39,14 @@
                             <ul class="mt-2 space-y-1">
                                 @foreach ($section->lessons as $lesson)
                                     <li class="flex items-center justify-between rounded-lg px-3 py-2 text-sm odd:bg-gray-50">
-                                        <span class="flex items-center gap-2 text-gray-600">
+                                        <a href="{{ route('lessons.show', $lesson) }}"
+                                            class="flex flex-1 items-center gap-2 text-gray-600 hover:text-primary-600">
                                             {{ ['video' => '🎬', 'text' => '📄', 'test' => '📝', 'task' => '💻'][$lesson->type] }}
                                             {{ $lesson->title }}
                                             @if ($lesson->is_free_preview)
                                                 <x-badge color="green">Открытый</x-badge>
                                             @endif
-                                        </span>
+                                        </a>
                                         <span class="text-xs text-gray-400">{{ $lesson->duration_minutes }} мин</span>
                                     </li>
                                 @endforeach
@@ -63,8 +65,7 @@
                         @php $myReview = $course->reviews->firstWhere('user_id', auth()->id()); @endphp
 
                         <form method="POST" action="{{ route('courses.reviews.store', $course) }}"
-                              class="mb-6 rounded-xl bg-gray-50 p-4"
-                              x-data="{ rating: {{ $myReview->rating ?? 5 }} }">
+                            class="mb-6 rounded-xl bg-gray-50 p-4" x-data="{ rating: {{ $myReview->rating ?? 5 }} }">
                             @csrf
 
                             <p class="text-sm font-medium text-gray-700">
@@ -73,16 +74,15 @@
 
                             <div class="mt-2 flex gap-1">
                                 @for ($i = 1; $i <= 5; $i++)
-                                    <button type="button" @click="rating = {{ $i }}"
-                                            class="text-2xl leading-none transition"
-                                            :class="rating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-300'">★</button>
+                                    <button type="button" @click="rating = {{ $i }}" class="text-2xl leading-none transition"
+                                        :class="rating >= {{ $i }} ? 'text-yellow-400' : 'text-gray-300'">★</button>
                                 @endfor
                                 <input type="hidden" name="rating" :value="rating">
                             </div>
 
                             <textarea name="text" rows="3"
-                                      class="mt-3 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                                      placeholder="Расскажите, что понравилось, а чего не хватило...">{{ $myReview->text ?? '' }}</textarea>
+                                class="mt-3 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                                placeholder="Расскажите, что понравилось, а чего не хватило...">{{ $myReview->text ?? '' }}</textarea>
                             <x-input-error :messages="$errors->get('text')" class="mt-2" />
 
                             <x-btn type="submit" size="sm" class="mt-3">
@@ -101,9 +101,11 @@
                     <div class="border-t border-gray-100 py-4 first:border-t-0 first:pt-0">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex items-center gap-3">
-                                <span class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-sm font-bold text-primary-700">
+                                <span
+                                    class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-sm font-bold text-primary-700">
                                     @if ($review->user->avatar_path)
-                                        <img src="{{ asset('storage/'.$review->user->avatar_path) }}" alt="" class="h-9 w-9 object-cover">
+                                        <img src="{{ asset('storage/' . $review->user->avatar_path) }}" alt=""
+                                            class="h-9 w-9 object-cover">
                                     @else
                                         {{ strtoupper(mb_substr($review->user->name, 0, 1)) }}
                                     @endif
@@ -116,11 +118,12 @@
 
                             <div class="flex items-center gap-3">
                                 <span class="text-sm">
-                                    <span class="text-yellow-400">{{ str_repeat('★', $review->rating) }}</span><span class="text-gray-300">{{ str_repeat('★', 5 - $review->rating) }}</span>
+                                    <span class="text-yellow-400">{{ str_repeat('★', $review->rating) }}</span><span
+                                        class="text-gray-300">{{ str_repeat('★', 5 - $review->rating) }}</span>
                                 </span>
                                 @if (auth()->id() === $review->user_id)
                                     <form method="POST" action="{{ route('reviews.destroy', $review) }}"
-                                          onsubmit="return confirm('Удалить ваш отзыв?')">
+                                        onsubmit="return confirm('Удалить ваш отзыв?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-xs text-red-500 hover:text-red-700">Удалить</button>
@@ -144,7 +147,7 @@
             {{-- Карточка покупки (динамическая кнопка) --}}
             <x-card>
                 <p class="text-3xl font-extrabold text-gray-900">
-                    {{ $course->access_type === 'free' ? 'Бесплатно' : ($course->price ? number_format($course->price, 0, ',', ' ') .' ₽' : 'Подписка') }}
+                    {{ $course->access_type === 'free' ? 'Бесплатно' : ($course->price ? number_format($course->price, 0, ',', ' ') . ' ₽' : 'Подписка') }}
                 </p>
 
                 <div class="mt-4 space-y-3">
@@ -152,7 +155,18 @@
                         <x-btn href="{{ route('login') }}" class="w-full">Войти, чтобы записаться</x-btn>
                     @else
                         @if ($enrollment)
-                            <x-btn href="#" class="w-full">Продолжить обучение ({{ $enrollment->progress_percent }}%)</x-btn>
+                            @php $nextLesson = $enrollment->nextLesson(); @endphp
+
+                            @if ($nextLesson)
+                                <x-btn href="{{ route('lessons.show', $nextLesson) }}" class="w-full">
+                                    Продолжить обучение ({{ $enrollment->progress_percent }}%)
+                                </x-btn>
+                                <p class="text-center text-xs text-gray-400">Следующий урок: {{ $nextLesson->title }}</p>
+                            @else
+                                <div class="rounded-lg bg-primary-50 px-4 py-3 text-center text-sm font-medium text-primary-700">
+                                    🎉 Курс пройден!
+                                </div>
+                            @endif
                         @elseif ($course->access_type === 'free')
                             <form method="POST" action="{{ route('courses.enroll', $course) }}">
                                 @csrf
@@ -176,7 +190,7 @@
                         </div>
                         <div class="mt-1 h-2 rounded-full bg-gray-100">
                             <div class="h-2 rounded-full bg-primary-500 transition-all"
-                                 style="width: {{ $enrollment->progress_percent }}%"></div>
+                                style="width: {{ $enrollment->progress_percent }}%"></div>
                         </div>
                     </div>
                 @endif
@@ -186,9 +200,11 @@
             <x-card>
                 <x-slot name="header">Автор курса</x-slot>
                 <div class="flex items-center gap-3">
-                    <span class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary-500 font-bold text-white">
+                    <span
+                        class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary-500 font-bold text-white">
                         @if ($course->author->avatar_path)
-                            <img src="{{ asset('storage/'.$course->author->avatar_path) }}" alt="" class="h-10 w-10 object-cover">
+                            <img src="{{ asset('storage/' . $course->author->avatar_path) }}" alt=""
+                                class="h-10 w-10 object-cover">
                         @else
                             {{ mb_substr($course->author->name, 0, 1) }}
                         @endif

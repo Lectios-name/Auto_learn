@@ -124,26 +124,43 @@ class CourseBuilderController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:video,text,test,task'],
-            'video_url' => ['nullable', 'url', 'max:500'],
+            'video_url' => ['nullable', 'string', 'max:500'],  // ← ослаблено: просто строка
             'content' => ['nullable', 'string'],
             'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:600'],
+            'video_file' => ['nullable', 'file', 'mimes:mp4,webm,mov', 'max:512000'],
         ], [
             'title.required' => 'Введите название урока.',
             'type.in' => 'Недопустимый тип урока.',
-            'video_url.url' => 'Ссылка на видео должна быть корректным URL.',
+            'video_url.max' => 'Ссылка на видео слишком длинная.',
             'duration_minutes.integer' => 'Длительность указывается в целых минутах.',
+            'video_file.mimes' => 'Допустимые форматы видео: mp4, webm, mov.',
+            'video_file.max' => 'Размер видеофайла не должен превышать 500 МБ.',
         ]);
 
         $data['is_free_preview'] = $request->boolean('is_free_preview');
 
+        // Нормализация URL: добавляем https:// если нет протокола
+        if (!empty($data['video_url']) && !preg_match('/^https?:\/\//', $data['video_url'])) {
+            $data['video_url'] = 'https://' . $data['video_url'];
+        }
+
         // Ссылка на видео имеет смысл только для видео-уроков
         if ($data['type'] !== Lesson::TYPE_VIDEO) {
             $data['video_url'] = null;
+            $data['video_path'] = null; // также очищаем файл, если сменили тип
         }
 
         $lesson->update($data);
 
-        // Пересчитываем длительность курса
+        // Загрузка видеофайла (имеет приоритет над ссылкой)
+        if ($request->hasFile('video_file')) {
+            if ($lesson->video_path) {
+                Storage::disk('public')->delete($lesson->video_path);
+            }
+
+            $lesson->update(['video_path' => $request->file('video_file')->store('videos', 'public')]);
+        }
+
         $lesson->section->course->recalculateDuration();
 
         return back()->with('success', 'Урок сохранён.');

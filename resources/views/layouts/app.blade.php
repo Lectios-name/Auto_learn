@@ -52,7 +52,8 @@
                     <div>
                         <p class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">Обучение</p>
                         <div class="mt-2 space-y-1">
-                            <x-sidebar-link href="#">
+                            <x-sidebar-link href="{{ route('student.my-courses') }}"
+                                :active="request()->routeIs('student.my-courses')">
                                 <x-slot name="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -60,7 +61,7 @@
                                     </svg></x-slot>
                                 Мои курсы
                             </x-sidebar-link>
-                            <x-sidebar-link href="{{ route('catalog') }}">
+                            <x-sidebar-link href="{{ route('catalog') }}" :active="request()->routeIs('catalog')">
                                 <x-slot name="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -68,7 +69,7 @@
                                     </svg></x-slot>
                                 Каталог курсов
                             </x-sidebar-link>
-                            <x-sidebar-link href="#">
+                            <x-sidebar-link href="#" :active="request()->routeIs('student.subscriptions')">
                                 <x-slot name="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -93,7 +94,7 @@
                                     </svg></x-slot>
                                 Мои курсы
                             </x-sidebar-link>
-                            <x-sidebar-link href="#">
+                            <x-sidebar-link href="{{ route('author.courses.create') }}">
                                 <x-slot name="icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.8" stroke="currentColor" class="h-5 w-5">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -234,7 +235,7 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    
+
                     @if (session('error'))
                         <div class="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                             {{ session('error') }}

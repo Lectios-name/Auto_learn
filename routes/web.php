@@ -8,6 +8,8 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\LessonPlayerController;
+use App\Http\Controllers\Student\DashboardController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -30,6 +32,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('courses.enroll');
     Route::post('/courses/{course}/reviews', [ReviewController::class, 'store'])->name('courses.reviews.store');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+
+    Route::get('/lessons/{lesson}', [LessonPlayerController::class, 'show'])->name('lessons.show');
+    Route::post('/lessons/{lesson}/complete', [LessonPlayerController::class, 'complete'])->name('lessons.complete');
+    Route::post('/lessons/{lesson}/uncomplete', [LessonPlayerController::class, 'uncomplete'])->name('lessons.uncomplete');
+    Route::post('/lessons/{lesson}/notes', [LessonPlayerController::class, 'saveNote'])->name('lessons.notes.save');
+    Route::post('/lessons/{lesson}/comments', [LessonPlayerController::class, 'storeComment'])->name('lessons.comments.store');
+
+    Route::get('/my-courses', [DashboardController::class, 'myCourses'])->name('student.my-courses');
 });
 
 Route::middleware(['auth', 'role:author'])
