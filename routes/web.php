@@ -9,7 +9,7 @@ use App\Http\Controllers\CoursePageController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LessonPlayerController;
-use App\Http\Controllers\Student\DashboardController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -17,9 +17,9 @@ Route::get('/', function () {
         : view('home');
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/courses/{course:slug}', [CoursePageController::class, 'show'])->name('courses.show');
@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/lessons/{lesson}/notes', [LessonPlayerController::class, 'saveNote'])->name('lessons.notes.save');
     Route::post('/lessons/{lesson}/comments', [LessonPlayerController::class, 'storeComment'])->name('lessons.comments.store');
 
-    Route::get('/my-courses', [DashboardController::class, 'myCourses'])->name('student.my-courses');
+    Route::get('/my-courses', [DashboardController::class, 'myCourses'])->middleware('auth')->name('student.my-courses');
 });
 
 Route::middleware(['auth', 'role:author'])
